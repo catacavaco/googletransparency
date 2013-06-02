@@ -1,0 +1,740 @@
+update REQUESTS r INNER JOIN 
+(SELECT COPYRIGHT_OWNER_ID, MIN(COPYRIGHT_OWNER_NAME) COPYRIGHT_OWNER_NAME FROM 
+(SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME, OCOR_NOME
+FROM TEMP1 T 
+WHERE OCOR_NOME = (SELECT MAX(AUX.OCOR_NOME)
+  			FROM TEMP1 AUX
+				WHERE AUX.COPYRIGHT_OWNER_ID = T.COPYRIGHT_OWNER_ID)) X
+GROUP BY COPYRIGHT_OWNER_ID) X
+
+on r.COPYRIGHT_OWNER_ID = X.COPYRIGHT_OWNER_ID
+set r.COPYRIGHT_OWNER_NAME = X.COPYRIGHT_OWNER_NAME
+----------------------------------------------------------------------------------
+
+SELECT COUNT(1) FROM 
+-- CONTA REPS
+(SELECT X.COPYRIGHT_OWNER_ID, R.COPYRIGHT_OWNER_NAME, COUNT(1) OCOR_NOME
+FROM REQUESTS R, 
+-- DUPLICADAS 
+(SELECT X.COPYRIGHT_OWNER_ID, COUNT(X.COPYRIGHT_OWNER_NAME) FROM 
+-- CRUA
+(SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NOT NULL
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME) /*AUX_TAB_CRUA*/ X
+-- /CRUA
+GROUP BY COPYRIGHT_OWNER_ID
+HAVING COUNT(X.COPYRIGHT_OWNER_NAME) >1 ) /*AUX_TAB_DUP_DESC*/ X
+-- /DUPLICADAS
+WHERE R.COPYRIGHT_OWNER_ID = X.COPYRIGHT_OWNER_ID
+GROUP BY X.COPYRIGHT_OWNER_ID, R.COPYRIGHT_OWNER_NAME
+ORDER BY X.COPYRIGHT_OWNER_ID, COUNT(1) DESC, R.COPYRIGHT_OWNER_NAME
+) /*AUX_TAB_CONTA_CADA_REP*/ X
+-- /CONTA REPS
+----------------------------------------------------------------------------------
+
+SELECT COUNT(1) FROM 
+(SELECT X.COPYRIGHT_OWNER_ID, X.COPYRIGHT_OWNER_NAME FROM
+CREATE TABLE TEMP1 AS 
+-- CONTA REPS
+-- (
+SELECT X.COPYRIGHT_OWNER_ID, R.COPYRIGHT_OWNER_NAME, COUNT(1) OCOR_NOME
+FROM REQUESTS R, 
+-- DUPLICADAS 
+(SELECT X.COPYRIGHT_OWNER_ID, COUNT(X.COPYRIGHT_OWNER_NAME) FROM 
+-- CRUA
+(SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NOT NULL
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME) /*AUX_TAB_CRUA*/ X
+-- /CRUA
+GROUP BY COPYRIGHT_OWNER_ID
+HAVING COUNT(X.COPYRIGHT_OWNER_NAME) >1 ) /*AUX_TAB_DUP_DESC*/ X
+-- /DUPLICADAS
+WHERE R.COPYRIGHT_OWNER_ID = X.COPYRIGHT_OWNER_ID
+GROUP BY X.COPYRIGHT_OWNER_ID, R.COPYRIGHT_OWNER_NAME
+ORDER BY X.COPYRIGHT_OWNER_ID, COUNT(1) DESC, R.COPYRIGHT_OWNER_NAME
+) /*AUX_TAB_CONTA_CADA_REP*/ X
+-- /CONTA REPS
+----------------------------------------------------------------------------------
+
+CREATE TABLE BKP_REQUESTS
+SELECT * FROM REQUESTS
+-- CONTA REPS
+SELECT SUM(COUNT) FROM 
+(SELECT X.COPYRIGHT_OWNER_ID, R.COPYRIGHT_OWNER_NAME, COUNT(1) COUNT
+FROM REQUESTS R, 
+-- DUPLICADAS 
+(SELECT X.COPYRIGHT_OWNER_ID, COUNT(X.COPYRIGHT_OWNER_NAME) FROM 
+-- CRUA
+(SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NOT NULL
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME) /*AUX_TAB_CRUA*/ X
+-- /CRUA
+GROUP BY COPYRIGHT_OWNER_ID
+HAVING COUNT(X.COPYRIGHT_OWNER_NAME) >1 ) /*AUX_TAB_DUP_DESC*/ X
+-- /DUPLICADAS
+WHERE R.COPYRIGHT_OWNER_ID = X.COPYRIGHT_OWNER_ID
+GROUP BY X.COPYRIGHT_OWNER_ID, R.COPYRIGHT_OWNER_NAME
+ORDER BY X.COPYRIGHT_OWNER_ID, COUNT(1) DESC, R.COPYRIGHT_OWNER_NAME
+) /*AUX_TAB_CONTA_CADA_REP*/ X
+-- /CONTA REPS
+----------------------------------------------------------------------------------
+select COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME from REQUESTS
+select * From GOOGLE.urls_no_action_taken
+select * From GOOGLE.REQUESTS
+select COUNT(*) From GOOGLE.DOMAIN
+
+----------------------------------------------------------------------------------
+INSERT INTO DESC_DOMAIN(DESCRICAO)
+select DOMAIN from (
+select domain
+From GOOGLE.DOMAIN
+group by domain
+union
+select domain
+From GOOGLE.urls_no_action_taken
+group by domain
+ORDER BY DOMAIN) x
+
+----------------------------------------------------------------------------------
+
+INSERT INTO COPYRIGHT_OWNER(CODIGO, DESCRICAO)
+SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NOT NULL
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+
+----------------------------------------------------------------------------------
+SELECT COUNT(*) FROM (
+SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME) X
+----------------------------------------------------------------------------------
+
+update removal_requests_prod_reason r INNER JOIN produto p 
+on r.produto like p.descricao
+set r.cd_produto = p.codigo
+
+----------------------------------------------------------------------------------
+SELECT COUNT(1) FROM (
+SELECT R.COPYRIGHT_OWNER_ID, R.COPYRIGHT_OWNER_NAME FROM
+REQUESTS R
+WHERE X.COPYRIGHT_OWNER_ID = R.COPYRIGHT_OWNER_ID
+ORDER BY R.COPYRIGHT_OWNER_ID) X,
+(SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME, COUNT(1),
+FROM REQUESTS R
+WHERE
+----------------------------------------------------------------------------------
+
+SELECT COUNT(*) FROM 
+(SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NULL) X
+----------------------------------------------------------------------------------
+
+SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NULL) X
+----------------------------------------------------------------------------------
+-- 21418
+SELECT COUNT(1) FROM (
+SELECT COPYRIGHT_OWNER_ID
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NOT NULL
+GROUP BY COPYRIGHT_OWNER_ID ) X
+----------------------------------------------------------------------------------
+-- 20149
+SELECT COUNT(1) FROM (
+SELECT COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_NAME IS NOT NULL
+GROUP BY COPYRIGHT_OWNER_NAME ) X
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+----------------------------------------------------------------------------------
+
+update removal_requests_prod_reason r INNER JOIN produto p 
+on r.produto like p.descricao
+set r.cd_produto = p.codigo
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+
+----------------------------------------------------------------------------------
+-- 239481
+select count(*) from (
+select domain
+From GOOGLE.DOMAIN
+group by domain) x
+----------------------------------------------------------------------------------
+-- 77765
+select count(*) from (
+select domain
+From GOOGLE.urls_no_action_taken
+group by domain) x
+----------------------------------------------------------------------------------
+-- 239481
+select count(*) from (
+select domain
+From GOOGLE.DOMAIN
+group by domain
+union
+select domain
+From GOOGLE.urls_no_action_taken
+group by domain) x
+----------------------------------------------------------------------------------
+create table aux2 as
+SELECT COPYRIGHT_OWNER_NAME, MIN(COPYRIGHT_OWNER_ID) COPYRIGHT_OWNER_ID FROM 
+(SELECT COPYRIGHT_OWNER_NAME, COPYRIGHT_OWNER_ID, OCOR_NOME
+FROM TEMP2 T 
+WHERE OCOR_NOME = (SELECT MAX(AUX.OCOR_NOME)
+				FROM TEMP2 AUX
+				WHERE AUX.COPYRIGHT_OWNER_NAME = T.COPYRIGHT_OWNER_NAME)) X
+GROUP BY COPYRIGHT_OWNER_NAME
+----------------------------------------------------------------------------------
+select concat(COPYRIGHT_OWNER_ID, '___', COPYRIGHT_OWNER_NAME)
+from aux2
+----------------------------------------------------------------------------------
+select rtrim(COPYRIGHT_OWNER_NAME), COPYRIGHT_OWNER_NAME from requests where COPYRIGHT_OWNER_NAME = '100% Records ' and  COPYRIGHT_OWNER_ID = 31287
+update requests set COPYRIGHT_OWNER_NAME = replace(COPYRIGHT_OWNER_NAME, '"', '' );
+update requests set COPYRIGHT_OWNER_NAME = rtrim(ltrim(COPYRIGHT_OWNER_NAME));
+UPDATE tbl_teste SET nome = replace( nome, 'a', 'a$a' )
+
+----------------------------------------------------------------------------------
+update REQUESTS r INNER JOIN aux2 x
+on r.COPYRIGHT_OWNER_NAME like x.COPYRIGHT_OWNER_NAME
+set r.COPYRIGHT_OWNER_ID = X.COPYRIGHT_OWNER_ID
+
+----------------------------------------------------------------------------------
+
+select count(1) from requests
+select count(1) from bkp_requests
+
+CREATE TABLE BKP_REQUESTS AS SELECT * fROM REQUESTS
+
+----------------------------------------------------------------------------------
+SELECT CONCAT( COPYRIGHT_OWNER_ID, '___', COPYRIGHT_OWNER_NAME ) FROM TEMP3
+----------------------------------------------------------------------------------
+CREATE TABLE TEMP3 AS 
+-- CONTA REPS
+-- (
+SELECT X.COPYRIGHT_OWNER_NAME, MIN(R.COPYRIGHT_OWNER_ID) COPYRIGHT_OWNER_ID
+FROM REQUESTS R, 
+-- DUPLICADAS 
+(SELECT X.COPYRIGHT_OWNER_NAME, COUNT(X.COPYRIGHT_OWNER_ID) FROM 
+-- CRUA
+(SELECT COPYRIGHT_OWNER_NAME, COPYRIGHT_OWNER_ID
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_NAME IS NOT NULL
+AND LENGTH(COPYRIGHT_OWNER_NAME) >1
+GROUP BY COPYRIGHT_OWNER_NAME, COPYRIGHT_OWNER_ID) /*AUX_TAB_CRUA*/ X
+-- /CRUA
+GROUP BY COPYRIGHT_OWNER_NAME
+HAVING COUNT(X.COPYRIGHT_OWNER_ID) >1 ) /*AUX_TAB_DUP_DESC*/ X
+-- /DUPLICADAS
+WHERE R.COPYRIGHT_OWNER_NAME = X.COPYRIGHT_OWNER_NAME
+GROUP BY X.COPYRIGHT_OWNER_NAME
+ORDER BY X.COPYRIGHT_OWNER_NAME
+-- ) /*AUX_TAB_CONTA_CADA_REP*/ X
+-- /CONTA REPS
+
+----------------------------------------------------------------------------------
+
+-- DUPLICADAS 
+(SELECT X.COPYRIGHT_OWNER_NAME, COUNT(X.COPYRIGHT_OWNER_ID) FROM 
+-- CRUA
+(SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NOT NULL
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME) /*AUX_TAB_CRUA*/ X
+-- /CRUA
+GROUP BY COPYRIGHT_OWNER_NAME
+HAVING COUNT(X.COPYRIGHT_OWNER_ID) >1 ) /*AUX_TAB_DUP_DESC*/ X
+-- /DUPLICADAS
+----------------------------------------------------------------------------------
+-- DUPLICADAS 
+(SELECT X.COPYRIGHT_OWNER_NAME, COUNT(X.COPYRIGHT_OWNER_ID) FROM 
+-- CRUA
+(SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NOT NULL
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME) /*AUX_TAB_CRUA*/ X
+-- /CRUA
+GROUP BY COPYRIGHT_OWNER_NAME
+HAVING COUNT(X.COPYRIGHT_OWNER_ID) >1 ) /*AUX_TAB_DUP_DESC*/ X
+-- /DUPLICADAS
+----------------------------------------------------------------------------------
+update REQUESTS r INNER JOIN 
+(SELECT COPYRIGHT_OWNER_ID, MIN(COPYRIGHT_OWNER_NAME) COPYRIGHT_OWNER_NAME FROM 
+(SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME, OCOR_NOME
+FROM TEMP1 T 
+WHERE OCOR_NOME = (SELECT MAX(AUX.OCOR_NOME)
+				FROM TEMP1 AUX
+				WHERE AUX.COPYRIGHT_OWNER_ID = T.COPYRIGHT_OWNER_ID)) X
+GROUP BY COPYRIGHT_OWNER_ID) X
+
+on r.COPYRIGHT_OWNER_ID = X.COPYRIGHT_OWNER_ID
+set r.COPYRIGHT_OWNER_NAME = X.COPYRIGHT_OWNER_NAME
+----------------------------------------------------------------------------------
+
+SELECT COUNT(1) FROM 
+-- CONTA REPS
+(SELECT X.COPYRIGHT_OWNER_ID, R.COPYRIGHT_OWNER_NAME, COUNT(1) OCOR_NOME
+FROM REQUESTS R, 
+-- DUPLICADAS 
+(SELECT X.COPYRIGHT_OWNER_ID, COUNT(X.COPYRIGHT_OWNER_NAME) FROM 
+-- CRUA
+(SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NOT NULL
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME) /*AUX_TAB_CRUA*/ X
+-- /CRUA
+GROUP BY COPYRIGHT_OWNER_ID
+HAVING COUNT(X.COPYRIGHT_OWNER_NAME) >1 ) /*AUX_TAB_DUP_DESC*/ X
+-- /DUPLICADAS
+WHERE R.COPYRIGHT_OWNER_ID = X.COPYRIGHT_OWNER_ID
+GROUP BY X.COPYRIGHT_OWNER_ID, R.COPYRIGHT_OWNER_NAME
+ORDER BY X.COPYRIGHT_OWNER_ID, COUNT(1) DESC, R.COPYRIGHT_OWNER_NAME
+) /*AUX_TAB_CONTA_CADA_REP*/ X
+-- /CONTA REPS
+----------------------------------------------------------------------------------
+
+SELECT COUNT(1) FROM 
+(SELECT X.COPYRIGHT_OWNER_ID, X.COPYRIGHT_OWNER_NAME FROM
+CREATE TABLE TEMP1 AS 
+-- CONTA REPS
+-- (
+SELECT X.COPYRIGHT_OWNER_ID, R.COPYRIGHT_OWNER_NAME, COUNT(1) OCOR_NOME
+FROM REQUESTS R, 
+-- DUPLICADAS 
+(SELECT X.COPYRIGHT_OWNER_ID, COUNT(X.COPYRIGHT_OWNER_NAME) FROM 
+-- CRUA
+(SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NOT NULL
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME) /*AUX_TAB_CRUA*/ X
+-- /CRUA
+GROUP BY COPYRIGHT_OWNER_ID
+HAVING COUNT(X.COPYRIGHT_OWNER_NAME) >1 ) /*AUX_TAB_DUP_DESC*/ X
+-- /DUPLICADAS
+WHERE R.COPYRIGHT_OWNER_ID = X.COPYRIGHT_OWNER_ID
+GROUP BY X.COPYRIGHT_OWNER_ID, R.COPYRIGHT_OWNER_NAME
+ORDER BY X.COPYRIGHT_OWNER_ID, COUNT(1) DESC, R.COPYRIGHT_OWNER_NAME
+) /*AUX_TAB_CONTA_CADA_REP*/ X
+-- /CONTA REPS
+----------------------------------------------------------------------------------
+
+CREATE TABLE BKP_REQUESTS
+SELECT * FROM REQUESTS
+-- CONTA REPS
+SELECT SUM(COUNT) FROM 
+(SELECT X.COPYRIGHT_OWNER_ID, R.COPYRIGHT_OWNER_NAME, COUNT(1) COUNT
+FROM REQUESTS R, 
+-- DUPLICADAS 
+(SELECT X.COPYRIGHT_OWNER_ID, COUNT(X.COPYRIGHT_OWNER_NAME) FROM 
+-- CRUA
+(SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NOT NULL
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME) /*AUX_TAB_CRUA*/ X
+-- /CRUA
+GROUP BY COPYRIGHT_OWNER_ID
+HAVING COUNT(X.COPYRIGHT_OWNER_NAME) >1 ) /*AUX_TAB_DUP_DESC*/ X
+-- /DUPLICADAS
+WHERE R.COPYRIGHT_OWNER_ID = X.COPYRIGHT_OWNER_ID
+GROUP BY X.COPYRIGHT_OWNER_ID, R.COPYRIGHT_OWNER_NAME
+ORDER BY X.COPYRIGHT_OWNER_ID, COUNT(1) DESC, R.COPYRIGHT_OWNER_NAME
+) /*AUX_TAB_CONTA_CADA_REP*/ X
+-- /CONTA REPS
+
+----------------------------------------------------------------------------------
+select COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME from REQUESTS
+select * From GOOGLE.urls_no_action_taken
+select * From GOOGLE.REQUESTS
+select COUNT(*) From GOOGLE.DOMAIN
+
+----------------------------------------------------------------------------------
+INSERT INTO DESC_DOMAIN(DESCRICAO)
+select DOMAIN from (
+select domain
+From GOOGLE.DOMAIN
+group by domain
+union
+select domain
+From GOOGLE.urls_no_action_taken
+group by domain
+ORDER BY DOMAIN) x
+----------------------------------------------------------------------------------
+
+INSERT INTO COPYRIGHT_OWNER(CODIGO, DESCRICAO)
+SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NOT NULL
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+----------------------------------------------------------------------------------
+
+SELECT COUNT(*) FROM (
+SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME) X
+----------------------------------------------------------------------------------
+update removal_requests_prod_reason r INNER JOIN produto p 
+on r.produto like p.descricao
+set r.cd_produto = p.codigo
+----------------------------------------------------------------------------------
+
+SELECT COUNT(1) FROM (
+SELECT R.COPYRIGHT_OWNER_ID, R.COPYRIGHT_OWNER_NAME FROM
+REQUESTS R
+WHERE X.COPYRIGHT_OWNER_ID = R.COPYRIGHT_OWNER_ID
+ORDER BY R.COPYRIGHT_OWNER_ID) X,
+
+----------------------------------------------------------------------------------
+SELECT COUNT(*) FROM 
+(SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NULL) X
+----------------------------------------------------------------------------------
+SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NULL) X
+----------------------------------------------------------------------------------
+-- 21418
+SELECT COUNT(1) FROM (
+SELECT COPYRIGHT_OWNER_ID
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NOT NULL
+GROUP BY COPYRIGHT_OWNER_ID ) X
+----------------------------------------------------------------------------------
+-- 20149
+SELECT COUNT(1) FROM (
+SELECT COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_NAME IS NOT NULL
+GROUP BY COPYRIGHT_OWNER_NAME ) X
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+----------------------------------------------------------------------------------
+
+update removal_requests_prod_reason r INNER JOIN produto p 
+on r.produto like p.descricao
+set r.cd_produto = p.codigo
+----------------------------------------------------------------------------------
+-- 239481
+select count(*) from (
+select domain
+From GOOGLE.DOMAIN
+group by domain) x
+----------------------------------------------------------------------------------
+-- 77765
+select count(*) from (
+select domain
+From GOOGLE.urls_no_action_taken
+group by domain) x
+----------------------------------------------------------------------------------
+-- 239481
+select count(*) from (
+select domain
+From GOOGLE.DOMAIN
+group by domain
+union
+select domain
+From GOOGLE.urls_no_action_taken
+group by domain) x
+----------------------------------------------------------------------------------
+insert into produto (descricao)
+select distinct produto FROM GOOGLE.removal_requests_product
+union
+select distinct produto FROM GOOGLE.removal_requests_prod_reason
+order by produto
+----------------------------------------------------------------------------------
+insert into MOTIVO (descricao)
+select distinct MOTIVO FROM GOOGLE.removal_requests_prod_reason
+ORDER BY MOTIVO
+----------------------------------------------------------------------------------
+update GOOGLE.removal_requests_product
+set semestre = 1
+where dia = 6;
+update GOOGLE.removal_requests_product
+set semestre = 2
+where dia = 12;
+----------------------------------------------------------------------------------
+update GOOGLE.removal_requests_prod_reason
+set semestre = 1
+where dia = 6;
+update GOOGLE.removal_requests_prod_reason
+set semestre = 2
+where dia = 12;
+----------------------------------------------------------------------------------
+select count(*) FROM GOOGLE.removal_requests_prod_reason r, pais p
+where r.cd_pais = p.codigo
+----------------------------------------------------------------------------------
+select p.codigo, r.produto
+from GOOGLE.removal_requests_prod_reason r, produto p
+where r.produto like p.descricao
+order by p.descricao
+----------------------------------------------------------------------------------
+update removal_requests_product r INNER JOIN produto p 
+on r.produto like p.descricao
+set r.cd_produto = p.codigo
+----------------------------------------------------------------------------------
+select p.codigo, r.produto
+from GOOGLE.removal_requests_product r, produto p
+where r.produto like p.descricao
+order by p.descricao
+----------------------------------------------------------------------------------
+update removal_requests_prod_reason r INNER JOIN produto p 
+on r.produto like p.descricao
+set r.cd_produto = p.codigo
+----------------------------------------------------------------------------------
+select m.codigo, r.cd_motivo, r.motivo
+from GOOGLE.removal_requests_prod_reason r, motivo m
+where r.motivo like m.descricao
+group by m.codigo, r.cd_motivo, r.motivo
+order by m.descricao
+----------------------------------------------------------------------------------
+update removal_requests_prod_reason r INNER JOIN motivo m 
+on r.motivo like m.descricao
+set r.cd_motivo = m.codigo
+----------------------------------------------------------------------------------
+select * from removal_requests_prod_reason where produto like 'ответы'
+select * From removal_requests_product
+select descricao from produto
+order by codigo
+----------------------------------------------------------------------------------
+SELECT descricao, count(1) FROM MOTIVO group by descricao
+SELECT descricao FROM produto
+----------------------------------------------------------------------------------
+select distinct produto 
+FROM GOOGLE.removal_requests_product
+order by produto
+----------------------------------------------------------------------------------
+select distinct produto FROM GOOGLE.removal_requests_prod_reason
+order by produto
+----------------------------------------------------------------------------------
+select motivo, count(*) FROM GOOGLE.removal_requests_prod_reason
+group by motivo
+order by motivo
+----------------------------------------------------------------------------------
+select m.descricao, count(*) 
+FROM GOOGLE.removal_requests_prod_reason r, motivo m
+where r.cd_motivo = m.codigo
+group by m.descricao
+order by m.descricao
+----------------------------------------------------------------------------------
+select * from motivo
+select * from produto
+----------------------------------------------------------------------------------
+SELECT P.DESCRICAO, R.* 
+FROM PAIS P, GOOGLE.REMOVAL_REQUESTS R
+WHERE R.CD_PAIS = P.CODIGO
+----------------------------------------------------------------------------------
+delete from REMOVAL_REQUESTS where id = 2
+----------------------------------------------------------------------------------
+UPDATE GOOGLE.REMOVAL_REQUESTS SET SEMESTRE = 1 WHERE SEMESTRE = 6;
+UPDATE GOOGLE.REMOVAL_REQUESTS SET SEMESTRE = 2 WHERE SEMESTRE = 12;
+----------------------------------------------------------------------------------
+select * From GOOGLE.pais
+select distinct cd_pais from GOOGLE.REMOVAL_REQUESTS
+select distinct pais from GOOGLE.REMOVAL_REQUESTS
+insert into GOOGLE.pais (codigo, descricao)
+select distinct cd_pais, pais from GOOGLE.REMOVAL_REQUESTS
+----------------------------------------------------------------------------------
+DELETE FROM GOOGLE.removal_requests_product
+DELETE FROM GOOGLE.removal_requests_prod_reason
+delete * from GOOGLE.REMOVAL_REQUESTS
+----------------------------------------------------------------------------------
+select * 
+from GOOGLE.removal_requests_product r, pais p
+where r.cd_pais = p.codigo
+----------------------------------------------------------------------------------
+select * from GOOGLE.removal_requests_prod_reason
+----------------------------------------------------------------------------------
+insert into pais(codigo, descricao)
+select cd_pais, pais 
+from GOOGLE.removal_requests_product r
+where r.cd_pais not in (select p.codigo from pais p where r.cd_pais = p.codigo)
+group by cd_pais, pais
+----------------------------------------------------------------------------------
+select * From GOOGLE.REMOVAL_REQUESTS where pais like 'Macedônia'
+select distinct pais From GOOGLE.REMOVAL_REQUESTS order by pais
+select * from removal_requests_prod_reason order by motivo
+----------------------------------------------------------------------------------
+SELECT concat('update GOOGLE.REMOVAL_REQUESTS set pais = \'', PAIS, '\' where pais = \'', PAIS, '\';')
+from GOOGLE.REMOVAL_REQUESTS 
+group by concat('update GOOGLE.REMOVAL_REQUESTS set pais = \'', PAIS, '\' where pais = \'', PAIS, '\';')
+ORDER BY PAIS
+----------------------------------------------------------------------------------
+CONCAT('FIRST ', 'SECOND');
+----------------------------------------------------------------------------------
+SELECT 'UPDATE' FROM GOOGLE.REMOVAL_REQUESTS
+----------------------------------------------------------------------------------
+select * from COPYRIGHT_OWNER
+SELECT COUNT(1) FROM COPYRIGHT_OWNER
+SELECT COUNT(DISTINCT COPYRIGHT_OWNER_ID) FROM REQUESTS
+SELECT DISTINCT DESCRICAO FROM COPYRIGHT_OWNER WHERE LENGTH(DESCRICAO) <=1
+----------------------------------------------------------------------------------
+UPDATE COPYRIGHT_OWNER SET DESCRICAO = NULL WHERE LENGTH(DESCRICAO) <=1
+----------------------------------------------------------------------------------
+17981
+select count(1) from REPORTING_ORGANIZATION
+19979
+select count(1) from COPYRIGHT_OWNER
+17981
+SELECT COUNT(DISTINCT REPORTING_ORGANIZATION_ID) FROM REQUESTS
+19979
+SELECT COUNT(DISTINCT COPYRIGHT_OWNER_ID) FROM REQUESTS
+----------------------------------------------------------------------------------
+SELECT SUBSTRING("O rato roeu a roupa do rei de roma", 8,12) FROM DUAL 
+----------------------------------------------------------------------------------
+UPDATE tabela SET CampoData = CONCAT(SUBSTRING(CampoVarchar,7,4),
+"-",SUBSTRING(CampoVarchar,4,2),
+"-", SUBSTRING(CampoVarchar,1,2))
+----------------------------------------------------------------------------------
+SELECT DATA_AUX FROM REQUESTS
+SELECT * FROM REQUESTS WHERE DATA IS NOT NULL REQUEST_ID = 1
+----------------------------------------------------------------------------------
+UPDATE REQUESTS
+SET DATA = CONCAT(SUBSTRING(DATA_AUX,1,10), ' ',SUBSTRING(DATA_AUX,12,8))
+-- WHERE REQUEST_ID = 1
+WHERE LENGTH(DATA_AUX) = 20
+----------------------------------------------------------------------------------
+19
+SELECT LENGTH('9999-12-31 23:59:59')  FROM DUAL
+----------------------------------------------------------------------------------
+605835
+SELECT * FROM REQUESTS WHERE LENGTH(DATA_AUX) <> 20
+----------------------------------------------------------------------------------
+DELETE FROM REQUESTS WHERE LENGTH(DATA_AUX) <> 20 AND CHILLING_EFFECTS_URL IS NULL
+----------------------------------------------------------------------------------
+SELECT DATA, DATA_AUX,
+	T.COPYRIGHT_OWNER_NAME, C.DESCRICAO,
+	T.REPORTING_ORGANIZATION_NAME, R.DESCRICAO
+FROM REQUESTS T, REPORTING_ORGANIZATION R, COPYRIGHT_OWNER C
+WHERE LENGTH(DATA_AUX) = 20
+AND T.REPORTING_ORGANIZATION_ID = R.CODIGO
+AND T.COPYRIGHT_OWNER_ID = C.CODIGO
+AND REPORTING_ORGANIZATION_NAME IS NOT NULL
+ AND COPYRIGHT_OWNER_NAME IS NOT NULL
+----------------------------------------------------------------------------------
+SELECT COUNT(1)
+FROM REQUESTS T, REPORTING_ORGANIZATION R, COPYRIGHT_OWNER C
+WHERE T.REPORTING_ORGANIZATION_ID = R.CODIGO
+AND T.COPYRIGHT_OWNER_ID = C.CODIGO
+----------------------------------------------------------------------------------
+INSERT INTO COPYRIGHT_OWNER(CODIGO, DESCRICAO)
+SELECT COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+FROM REQUESTS
+WHERE COPYRIGHT_OWNER_ID IS NOT NULL
+GROUP BY COPYRIGHT_OWNER_ID, COPYRIGHT_OWNER_NAME
+----------------------------------------------------------------------------------
+INSERT INTO REPORTING_ORGANIZATION(CODIGO, DESCRICAO)
+SELECT REPORTING_ORGANIZATION_ID, REPORTING_ORGANIZATION_NAME
+FROM REQUESTS
+WHERE REPORTING_ORGANIZATION_ID IS NOT NULL
+GROUP BY REPORTING_ORGANIZATION_ID, REPORTING_ORGANIZATION_NAME
+----------------------------------------------------------------------------------
+select DISTINCT REPORTING_ORGANIZATION_NAME
+from REQUESTS 
+WHERE REPORTING_ORGANIZATION_ID = 0
+AND LENGTH(REPORTING_ORGANIZATION_NAME) > 4
+----------------------------------------------------------------------------------
+22873
+SELECT MAX(REPORTING_ORGANIZATION_ID) FROM REQUESTS
+----------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
+SELECT REPORTING_ORGANIZATION_ID, REPORTING_ORGANIZATION_NAME 
+FROM REQUESTS
+----------------------------------------------------------------------------------
+CREATE TABLE  TEMP5 AS 
+-- CONTA REPS
+-- (
+SELECT X. REPORTING_ORGANIZATION_ID, R. REPORTING_ORGANIZATION_NAME, COUNT(1) OCOR_NOME
+FROM REQUESTS R, 
+-- DUPLICADAS 
+(SELECT X. REPORTING_ORGANIZATION_ID, COUNT(X. REPORTING_ORGANIZATION_NAME) FROM 
+-- CRUA
+(SELECT  REPORTING_ORGANIZATION_ID,  REPORTING_ORGANIZATION_NAME
+FROM REQUESTS
+WHERE  REPORTING_ORGANIZATION_ID IS NOT NULL
+AND REPORTING_ORGANIZATION_ID IS NOT NULL
+AND REPORTING_ORGANIZATION_NAME IS NOT NULL
+AND REPORTING_ORGANIZATION_ID >0
+GROUP BY  REPORTING_ORGANIZATION_ID,  REPORTING_ORGANIZATION_NAME) /*AUX_TAB_CRUA*/ X
+-- /CRUA
+GROUP BY  REPORTING_ORGANIZATION_ID
+HAVING COUNT(X. REPORTING_ORGANIZATION_NAME) >1 ) /*AUX_TAB_DUP_DESC*/ X
+-- /DUPLICADAS
+WHERE R. REPORTING_ORGANIZATION_ID = X. REPORTING_ORGANIZATION_ID
+GROUP BY X. REPORTING_ORGANIZATION_ID, R. REPORTING_ORGANIZATION_NAME
+ORDER BY X. REPORTING_ORGANIZATION_ID, COUNT(1) DESC, R. REPORTING_ORGANIZATION_NAME
+) /*AUX_TAB_CONTA_CADA_REP*/ X
+-- /CONTA REPS
+----------------------------------------------------------------------------------
+CREATE TABLE AUX5 AS
+SELECT A.REPORTING_ORGANIZATION_ID, A.REPORTING_ORGANIZATION_NAME 
+fROM TEMP5 A,
+(SELECT REPORTING_ORGANIZATION_ID, 
+	MAX(LENGTH(REPORTING_ORGANIZATION_NAME)) REPORTING_ORGANIZATION_NAME FROM TEMP5
+GROUP BY REPORTING_ORGANIZATION_ID) B
+WHERE A.REPORTING_ORGANIZATION_ID = B.REPORTING_ORGANIZATION_ID
+AND LENGTH(A.REPORTING_ORGANIZATION_NAME) = B.REPORTING_ORGANIZATION_NAME
+----------------------------------------------------------------------------------
+update REQUESTS r INNER JOIN AUX5 A
+on R.REPORTING_ORGANIZATION_ID = A.REPORTING_ORGANIZATION_ID
+set R.REPORTING_ORGANIZATION_NAME = A.REPORTING_ORGANIZATION_NAME
+----------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
+update REQUESTS r INNER JOIN AUX6 A
+on R.REPORTING_ORGANIZATION_NAME = A.REPORTING_ORGANIZATION_NAME
+set R.REPORTING_ORGANIZATION_ID = A.REPORTING_ORGANIZATION_ID
+----------------------------------------------------------------------------------
+CREATE TABLE AUX6 AS
+SELECT A.REPORTING_ORGANIZATION_NAME, A.REPORTING_ORGANIZATION_ID 
+fROM TEMP6 A,
+(SELECT REPORTING_ORGANIZATION_NAME, 
+	MIN(REPORTING_ORGANIZATION_ID) REPORTING_ORGANIZATION_ID FROM TEMP6
+GROUP BY REPORTING_ORGANIZATION_NAME) B
+WHERE A.REPORTING_ORGANIZATION_NAME = B.REPORTING_ORGANIZATION_NAME
+AND A.REPORTING_ORGANIZATION_ID = B.REPORTING_ORGANIZATION_ID
+-------------------------------------------------------
+CREATE TABLE   TEMP6 AS 
+-- CONTA REPS
+-- (
+SELECT X. REPORTING_ORGANIZATION_NAME, R. REPORTING_ORGANIZATION_ID, COUNT(1) OCOR_NOME
+FROM REQUESTS R, 
+-- DUPLICADAS 
+(SELECT X. REPORTING_ORGANIZATION_NAME, COUNT(X. REPORTING_ORGANIZATION_ID) FROM 
+-- CRUA
+(SELECT  REPORTING_ORGANIZATION_NAME,  REPORTING_ORGANIZATION_ID
+FROM REQUESTS
+WHERE  REPORTING_ORGANIZATION_NAME IS NOT NULL
+AND REPORTING_ORGANIZATION_NAME IS NOT NULL
+AND REPORTING_ORGANIZATION_ID IS NOT NULL
+AND REPORTING_ORGANIZATION_NAME >0
+GROUP BY  REPORTING_ORGANIZATION_NAME,  REPORTING_ORGANIZATION_ID) /*AUX_TAB_CRUA*/ X
+-- /CRUA
+GROUP BY  REPORTING_ORGANIZATION_NAME
+HAVING COUNT(X. REPORTING_ORGANIZATION_ID) >1 ) /*AUX_TAB_DUP_DESC*/ X
+-- /DUPLICADAS
+WHERE R. REPORTING_ORGANIZATION_NAME = X. REPORTING_ORGANIZATION_NAME
+GROUP BY X. REPORTING_ORGANIZATION_NAME, R. REPORTING_ORGANIZATION_ID
+ORDER BY X. REPORTING_ORGANIZATION_NAME, COUNT(1) DESC, R. REPORTING_ORGANIZATION_ID
+) /*AUX_TAB_CONTA_CADA_REP*/ X
+----------------------------------------------------------------------------------
+SELECT REPORTING_ORGANIZATION_ID, REPORTING_ORGANIZATION_NAME 
+FROM REQUESTS
+----------------------------------------------------------------------------------
+select * 
+From requests 
+where REPORTING_ORGANIZATION_ID = 0
+----------------------------------------------------------------------------------
+ALTER TABLE `google`.`domain` RENAME TO  `google`.`cop_domain`;
+ALTER TABLE `google`.`desc_domain` RENAME TO  `google`.`cop_desc_domain`;
+----------------------------------------------------------------------------------
+update COP_DOMAIN D INNER JOIN COP_DESC_DOMAIN M
+on D.DOMAIN = M.DESCRICAO
+set D.CD_DOMAIN = M.CODIGO;
+----------------------------------------------------------------------------------
+UPDATE cop_urls_no_action_taken D INNER JOIN DESC_DOMAIN M
+on D.DOMAIN = M.DESCRICAO
+set D.CD_DOMAIN = M.CODIGO;
+----------------------------------------------------------------------------------
